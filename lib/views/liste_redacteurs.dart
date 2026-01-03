@@ -1,4 +1,5 @@
 import 'package:app_redacteurs_firebase/models/redacteur.dart';
+import 'package:app_redacteurs_firebase/views/ajout_redacteur.dart';
 import 'package:app_redacteurs_firebase/views/pageAccueil.dart';
 import 'package:app_redacteurs_firebase/widgets/card_redacteur.dart';
 import 'package:app_redacteurs_firebase/widgets/details_redacteur.dart';
@@ -36,7 +37,6 @@ class _ListeRedacteursState extends State<ListeRedacteurs> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -62,36 +62,130 @@ class _ListeRedacteursState extends State<ListeRedacteurs> {
         ),
       ),
 
-      body: ResponsiveGridList(
-        minItemWidth: 150,
-        horizontalGridSpacing: 16,
-        verticalGridSpacing: 16,
-        horizontalGridMargin: 16,
-        verticalGridMargin: 16,
-        children: redacteurs
-            .map(
-              (redacteur) => CardRedacteur(
-                redacteur: redacteur,
-                onView: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DetailsRedacteur(redacteur: redacteur),
+      body: _isLoading
+          ? const Center(
+            child: CircularProgressIndicator(
+              color: Colors.pink, 
+              strokeWidth: 6,
+              semanticsLabel: 'Chargement des rédacteurs',
+              semanticsValue: 'En cours',
+            ),
+          )
+          : _body(),
+    );
+  }
+
+  Widget _body() {
+    
+    if (redacteurProvider.error != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            "Erreur: ${redacteurProvider.error}",
+            style: const TextStyle(color: Colors.red),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+
+    if (redacteurs.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              "Oops! Aucun rédacteur disponible pour le moment",
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 18,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AjoutRedacteur(),
+                  ),
+                );
+              },
+              child: const Text('Ajouter un rédacteur'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ResponsiveGridList(
+      minItemWidth: 150,
+      horizontalGridSpacing: 16,
+      verticalGridSpacing: 16,
+      horizontalGridMargin: 16,
+      verticalGridMargin: 16,
+      children: redacteurs
+          .map(
+            (redacteur) => CardRedacteur(
+              redacteur: redacteur,
+              onView: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        DetailsRedacteur(redacteur: redacteur),
+                  ),
+                );
+              },
+              onDelete: () async {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(
+                      'Confirmer la suppression',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold, 
+                        color: Colors.pinkAccent
+                      ),
                     ),
-                  );
-                },
-                onDelete: () async {
-                  await redacteurProvider.supprimerRedacteur(redacteur.id!);
-                  if (mounted) {
-                    setState(() {
-                      redacteurs.remove(redacteur);
-                    });
-                  }
+                    content: Text('Êtes-vous sûr de vouloir supprimer ce rédacteur ?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text(
+                          'Annuler',
+                          style: TextStyle(color: Colors.pinkAccent),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          await redacteurProvider.supprimerRedacteur(redacteur.id!);
+                          if (mounted) {
+                            setState(() {
+                              redacteurs.removeWhere((r) => r.id == redacteur.id);
+                            });
+                          }
+                          Navigator.push(
+                            context, 
+                            MaterialPageRoute(builder: (context, ) => ListeRedacteurs())
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Redacteur supprimé avec succès!"), 
+                              backgroundColor: Colors.pink,
+                              behavior: SnackBarBehavior.floating,
+                            )
+                          );
+                        },
+                        child: Text('Supprimer', style: TextStyle(color: Colors.pink)),
+                      ),
+                    ],
+                  ));
                 },
               ),
             )
-            .toList(),
-      ),
+          .toList(),
     );
   }
 }
