@@ -1,4 +1,5 @@
-import 'package:app_redacteurs_firebase/widgets/liste_redacteurs.dart';
+import 'package:app_redacteurs_firebase/views/ajout_redacteur.dart';
+import 'package:app_redacteurs_firebase/views/liste_redacteurs.dart';
 import 'package:flutter/material.dart';
 
 class PageAccueil extends StatelessWidget {
@@ -9,11 +10,14 @@ class PageAccueil extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Magazine Infos', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+        title: const Text(
+          'Magazine Infos',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        ),
         backgroundColor: Colors.pink,
         toolbarHeight: 100,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(0)),
         ),
       ),
 
@@ -70,22 +74,30 @@ class PageAccueil extends StatelessWidget {
                   ListTile(
                     leading: Icon(Icons.home_rounded, color: Colors.pink),
                     title: Text('Accueil'),
-                    onTap: () {
-                      
-                    },
+                    onTap: () {},
                   ),
                   ListTile(
                     leading: Icon(Icons.person_add_rounded, color: Colors.pink),
                     title: Text('Ajouter un rédacteur'),
                     onTap: () {
-                      
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AjoutRedacteur(),
+                        ),
+                      );
                     },
                   ),
                   ListTile(
                     leading: Icon(Icons.info_rounded, color: Colors.pink),
                     title: Text('Informations sur les rédacteurs'),
                     onTap: () {
-                      
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ListeRedacteurs(),
+                        ),
+                      );
                     },
                   ),
                 ],
@@ -97,16 +109,52 @@ class PageAccueil extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Text(
                 'v1.0.0',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: Colors.grey),
               ),
             ),
           ],
         ),
       ),
-      
-      body: const ListeRedacteurs()
+
+      body: Column(
+        children: [
+          const Image(
+            image: AssetImage('assets/images/nohassi-img.jpg')
+          ),
+
+          const SizedBox(height: 20),
+
+          Container(
+            child: Column(
+              children: [
+                const Text(
+                  'Bienvenue au Magazine Infos',
+                  style: TextStyle(
+                    // fontWeight: FontWeight.w500,
+                    fontSize: 24,
+                  ),
+                )
+              ],
+            ),
+          ),
+
+
+          const SizedBox(height: 20),
+        ],
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.pink,
+        child: const Icon(Icons.add, color: Colors.white),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AjoutRedacteur()),
+          );
+        },
+      ),
     );
   }
 }

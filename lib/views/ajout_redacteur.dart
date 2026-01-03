@@ -1,3 +1,4 @@
+import 'package:app_redacteurs_firebase/views/liste_redacteurs.dart';
 import 'package:flutter/material.dart';
 import 'package:app_redacteurs_firebase/models/redacteur.dart';
 import 'package:app_redacteurs_firebase/providers/redacteurProvider.dart';
@@ -10,7 +11,7 @@ class AjoutRedacteur extends StatefulWidget {
 }
 
 class _AjoutRedacteurState extends State<AjoutRedacteur> {
-  RedacteurProvider _redacteurProvider = RedacteurProvider();
+  final RedacteurProvider _redacteurProvider = RedacteurProvider();
 
   final _formKey = GlobalKey<FormState>();
   final _nomController = TextEditingController();
@@ -31,6 +32,15 @@ class _AjoutRedacteurState extends State<AjoutRedacteur> {
     super.dispose();
   }
 
+  Future<void> _clearForm() async {
+    _nomController.clear();
+    _prenomController.clear();
+    _emailController.clear();
+    _telephoneController.clear();
+    _specialiteController.clear();
+    _adresseControlle.clear();
+  }
+
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final newRedacteur = Redacteur(
@@ -41,8 +51,13 @@ class _AjoutRedacteurState extends State<AjoutRedacteur> {
         specialite: _specialiteController.text,
         adresse: _adresseControlle.text,
       );
+
       await _redacteurProvider.ajouterRedacteur(newRedacteur);
-      
+
+      if (!mounted) return;
+
+      await _clearForm();
+
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -58,9 +73,9 @@ class _AjoutRedacteurState extends State<AjoutRedacteur> {
           );
         },
       );
-      
-      if (!mounted) return;
-      Navigator.of(context).pop();
+
+      Navigator.push(context, MaterialPageRoute(builder: (context) => ListeRedacteurs()));
+
     }
   }
 
@@ -69,8 +84,8 @@ class _AjoutRedacteurState extends State<AjoutRedacteur> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(), 
-          icon: Icon(Icons.arrow_back, color: Colors.white)
+          onPressed: () => Navigator.of(context).pop(),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
         ),
         centerTitle: true,
         title: Text(
@@ -95,13 +110,12 @@ class _AjoutRedacteurState extends State<AjoutRedacteur> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-
               Text(
-                "Ajouter un nouveau rédacteur", 
+                "Ajouter un nouveau rédacteur",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
-                  color: Colors.pink
+                  color: Colors.pink,
                 ),
               ),
 
@@ -111,7 +125,6 @@ class _AjoutRedacteurState extends State<AjoutRedacteur> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    
                     TextFormField(
                       controller: _prenomController,
                       decoration: InputDecoration(labelText: 'Prénom'),
@@ -135,7 +148,7 @@ class _AjoutRedacteurState extends State<AjoutRedacteur> {
                         return null;
                       },
                     ),
-                   
+
                     const SizedBox(height: 15),
 
                     TextFormField(
@@ -202,16 +215,23 @@ class _AjoutRedacteurState extends State<AjoutRedacteur> {
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             shape: const RoundedRectangleBorder(),
-                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 45),
+                            padding: EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 45,
+                            ),
                             backgroundColor: Colors.pinkAccent,
                           ),
-                          onPressed: dispose,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ListeRedacteurs(),
+                              ),
+                            );
+                          },
                           child: Text(
-                            'Annuler', 
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14
-                            ),
+                            'Annuler',
+                            style: TextStyle(color: Colors.white, fontSize: 14),
                           ),
                         ),
 
@@ -219,28 +239,32 @@ class _AjoutRedacteurState extends State<AjoutRedacteur> {
 
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
-                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 45),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(5),
+                              ),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 45,
+                            ),
                             backgroundColor: Color(0xFFE91E63),
                           ),
                           onPressed: _submitForm,
                           child: Text(
-                            'Ajouter', 
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14
-                            ),
+                            'Ajouter',
+                            style: TextStyle(color: Colors.white, fontSize: 14),
                           ),
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
             ],
           ),
         ),
-      )
+      ),
     );
   }
 }

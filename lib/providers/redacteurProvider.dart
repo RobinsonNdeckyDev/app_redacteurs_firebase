@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 class RedacteurProvider extends ChangeNotifier {
-  
   // FirebaseFirestore pour accéder à la base de données Firestore
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   // Nom de la collection dans Firestore
@@ -27,17 +26,21 @@ class RedacteurProvider extends ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      await _firestore.collection(nomCollection).add(redacteur.toMap());
+      // Préparation des données à ajouter avec createdAt et updatedAt
+      Map<String, dynamic> data = redacteur.toMap();
+      data['createdAt'] = FieldValue.serverTimestamp();
+      data['updatedAt'] = FieldValue.serverTimestamp();
+
+      await _firestore.collection(nomCollection).add(data);
 
       // Rafraîchissement de la liste des rédacteurs après l'ajout
-      await recupererRedacteurs(); 
+      await recupererRedacteurs();
+
       _isLoading = false;
-      notifyListeners();
       return true;
     } catch (e) {
       _error = 'Erreur lors de l\'ajout : ${e.toString()}';
       _isLoading = false;
-      notifyListeners();
       return false;
     }
   }
@@ -50,15 +53,18 @@ class RedacteurProvider extends ChangeNotifier {
       notifyListeners();
 
       // Récupération des données depuis Firestore
-      QuerySnapshot snapshot = await _firestore
-          .collection(nomCollection)
-          .orderBy('createdAt', descending: true)
-          .get();
+      QuerySnapshot snapshot = await _firestore.collection(nomCollection).get();
 
       // Mise à jour de la liste des rédacteurs avec les données Firestore
       _redacteurs = snapshot.docs
-          .map((doc) => Redacteur.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>))
+          .map((doc) => Redacteur.fromFirestore(doc))
           .toList();
+
+      // Tri local : les plus récents en premier, ceux sans date à la fin
+      _redacteurs.sort(
+        (a, b) =>
+            (b.createdAt ?? DateTime(0)).compareTo(a.createdAt ?? DateTime(0)),
+      );
 
       _isLoading = false;
       notifyListeners();
@@ -72,11 +78,14 @@ class RedacteurProvider extends ChangeNotifier {
   // READ - Récupérer un rédacteur par ID
   Future<Redacteur?> recupererRedacteurParId(String id) async {
     try {
-      DocumentSnapshot doc = await _firestore.collection(nomCollection).doc(id).get();
+      DocumentSnapshot doc = await _firestore
+          .collection(nomCollection)
+          .doc(id)
+          .get();
 
       // Récupération des données depuis Firestore
       if (doc.exists) {
-        return Redacteur.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>);
+        return Redacteur.fromFirestore(doc);
       }
       return null;
     } catch (e) {
@@ -88,14 +97,18 @@ class RedacteurProvider extends ChangeNotifier {
 
   // READ - Stream des rédacteurs en temps réel
   Stream<List<Redacteur>> streamRedacteurs() {
-    return _firestore
-        .collection(nomCollection)
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => Redacteur.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>))
+    return _firestore.collection(nomCollection).snapshots().map((snapshot) {
+      final redacteurs = snapshot.docs
+          .map((doc) => Redacteur.fromFirestore(doc))
           .toList();
+
+      // Tri local pour le stream aussi
+      redacteurs.sort(
+        (a, b) =>
+            (b.createdAt ?? DateTime(0)).compareTo(a.createdAt ?? DateTime(0)),
+      );
+
+      return redacteurs;
     });
   }
 
@@ -105,7 +118,7 @@ class RedacteurProvider extends ChangeNotifier {
       _isLoading = true;
       _error = null;
       notifyListeners();
-      
+
       // Préparation des données à mettre à jour
       Map<String, dynamic> data = redacteur.toMap();
       data['updatedAt'] = FieldValue.serverTimestamp();
@@ -152,13 +165,13 @@ class RedacteurProvider extends ChangeNotifier {
   Future<List<Redacteur>> rechercherRedacteurs(String query) async {
     try {
       String searchLower = query.toLowerCase();
-      
+
       // Filtrer localement (plus efficace pour la recherche)
       return _redacteurs.where((redacteur) {
         return redacteur.nom.toLowerCase().contains(searchLower) ||
-               redacteur.prenom.toLowerCase().contains(searchLower) ||
-               redacteur.email.toLowerCase().contains(searchLower) ||
-               redacteur.specialite?.toLowerCase().contains(searchLower) == true;
+            redacteur.prenom.toLowerCase().contains(searchLower) ||
+            redacteur.email.toLowerCase().contains(searchLower) ||
+            redacteur.specialite?.toLowerCase().contains(searchLower) == true;
       }).toList();
     } catch (e) {
       _error = 'Erreur lors de la recherche : ${e.toString()}';

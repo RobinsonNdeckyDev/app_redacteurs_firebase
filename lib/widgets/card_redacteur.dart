@@ -2,56 +2,63 @@ import 'package:flutter/material.dart';
 import 'package:app_redacteurs_firebase/models/redacteur.dart';
 
 class CardRedacteur extends StatelessWidget {
-  
   final Redacteur redacteur;
-  final VoidCallback onEdit;
+  final VoidCallback onView;
   final VoidCallback onDelete;
 
   const CardRedacteur({
     super.key,
     required this.redacteur,
-    required this.onEdit,
+    required this.onView,
     required this.onDelete,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.visibility, color: Colors.blue),
-            
-            const SizedBox(width: 12),
-            
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    redacteur.nom,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  Text(
-                    redacteur.email,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ),
+            // Avatar par défaut
+            const CircleAvatar(
+              radius: 35,
+              backgroundColor: Colors.pinkAccent,
+              child: Icon(Icons.person, size: 40, color: Colors.white),
             ),
-            
-            IconButton(
-              icon: const Icon(Icons.edit, color: Colors.orange),
-              onPressed: onEdit,
+
+            const SizedBox(height: 20),
+
+            // Prénom et Nom
+            Text(
+              '${redacteur.prenom} ${redacteur.nom}',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            
-            IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: onDelete,
+
+            const SizedBox(height: 10),
+
+            // Actions Voir et Delete
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.visibility, color: Colors.blue),
+                  onPressed: onView,
+                  tooltip: 'Voir',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: onDelete,
+                  tooltip: 'Supprimer',
+                ),
+              ],
             ),
           ],
         ),
