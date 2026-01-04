@@ -75,7 +75,7 @@ class _DetailsRedacteurState extends State<DetailsRedacteur> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
         backgroundColor: Colors.pink,
-        toolbarHeight: 100,
+        toolbarHeight: 80,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
         ),
@@ -174,7 +174,7 @@ class _DetailsRedacteurState extends State<DetailsRedacteur> {
                 ),
               ),
 
-              const SizedBox(height: 60),
+              const SizedBox(height: 40),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -197,7 +197,7 @@ class _DetailsRedacteurState extends State<DetailsRedacteur> {
                       ),
                       backgroundColor: Colors.pinkAccent,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 40,
+                        horizontal: 25,
                         vertical: 10,
                       ),
                     ),
@@ -217,7 +217,7 @@ class _DetailsRedacteurState extends State<DetailsRedacteur> {
                       ),
                       backgroundColor: Colors.pink,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 40,
+                        horizontal: 25,
                         vertical: 10,
                       ),
                     ),

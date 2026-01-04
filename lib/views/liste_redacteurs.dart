@@ -56,7 +56,7 @@ class _ListeRedacteursState extends State<ListeRedacteurs> {
           ),
         ),
         backgroundColor: Colors.pink,
-        toolbarHeight: 100,
+        toolbarHeight: 80,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
         ),

@@ -88,7 +88,7 @@ class _AjoutRedacteurState extends State<AjoutRedacteur> {
           ),
         ),
         backgroundColor: Colors.pink,
-        toolbarHeight: 100,
+        toolbarHeight: 80,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
         ),
@@ -227,7 +227,7 @@ class _AjoutRedacteurState extends State<AjoutRedacteur> {
                             ),
                           ),
 
-                          const SizedBox(width: 40),
+                          const SizedBox(width: 20),
 
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(

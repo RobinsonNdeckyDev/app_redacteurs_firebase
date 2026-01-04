@@ -15,7 +15,7 @@ class PageAccueil extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
         backgroundColor: Colors.pink,
-        toolbarHeight: 100,
+        toolbarHeight: 80,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(0)),
         ),
@@ -242,7 +242,7 @@ class PageAccueil extends StatelessWidget {
                     width: 150,
                     height: 150,
                   ),
-                  borderRadius: BorderRadius.circular(25),
+                  borderRadius: BorderRadius.circular(50),
                 ),
 
                 ClipRRect(
@@ -251,7 +251,7 @@ class PageAccueil extends StatelessWidget {
                     width: 150,
                     height: 150,
                   ),
-                  borderRadius: BorderRadius.circular(25),
+                  borderRadius: BorderRadius.circular(50),
                 ),
               ],
             ),

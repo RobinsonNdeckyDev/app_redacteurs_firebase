@@ -33,7 +33,6 @@ class Redacteur {
       'telephone': telephone,
       'adresse': adresse,
       'specialite': specialite,
-      // createdAt et updatedAt sont gérés par le Provider
     };
   }
 

@@ -128,7 +128,7 @@ class _UpdateRedacteurState extends State<UpdateRedacteur> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
         backgroundColor: Colors.pink,
-        toolbarHeight: 100,
+        toolbarHeight: 80,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
         ),
@@ -248,7 +248,7 @@ class _UpdateRedacteurState extends State<UpdateRedacteur> {
                               shape: const RoundedRectangleBorder(),
                               padding: EdgeInsets.symmetric(
                                 vertical: 10,
-                                horizontal: 45,
+                                horizontal: 25,
                               ),
                               backgroundColor: Colors.pinkAccent,
                             ),
@@ -277,7 +277,7 @@ class _UpdateRedacteurState extends State<UpdateRedacteur> {
                               ),
                               padding: EdgeInsets.symmetric(
                                 vertical: 10,
-                                horizontal: 45,
+                                horizontal: 25,
                               ),
                               backgroundColor: Color(0xFFE91E63),
                             ),
